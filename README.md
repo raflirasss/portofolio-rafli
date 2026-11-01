@@ -61,7 +61,7 @@ place. What's left is marked `TODO` in `src/data/portfolio.ts`:
 - [ ] `projects` → Human Activity Detection, BKF Cafe Supplies, Arenesia: confirm status, add tech, links and covers when ready
 - [ ] `skills` → "Web & Software": add the languages and frameworks you use
 - [ ] `personal.availability`: confirm the "Open to opportunities" pill, or remove it
-- [ ] `seo.siteUrl`: set to `https://rafliras.vercel.app` (the URL on your CV). Change it if you deploy elsewhere.
+- [ ] `seo.siteUrl` is `https://www.rafliras.site`. If the domain ever changes, update it there (it feeds canonical URLs, the sitemap, OG tags and the PDF).
 - [ ] Optional: run `npm run assets` if you change your name or monogram (it updates the OG image)
 
 ---
@@ -406,8 +406,12 @@ You can also open `/print/` in a browser and use **Print → Save as PDF** (A4, 
    - Build command: `npm run build`
    - Output directory: `dist`
 4. Click **Deploy**.
-5. Copy the production URL (or add your custom domain under _Settings → Domains_), put it in
-   `seo.siteUrl`, then commit and push. Vercel redeploys automatically.
+5. Add your domain under _Project → Settings → Domains_ and follow the DNS instructions
+   Vercel shows. Keep `seo.siteUrl` in `src/data/portfolio.ts` set to the main domain.
+   After that, every push to `main` redeploys automatically.
+
+**Current setup:** the Vercel project (`portofolio-rafli-kohl.vercel.app`) serves the custom
+domain **www.rafliras.site** as the main address; `rafliras.site` redirects to it.
 
 You can also deploy from the CLI: `npm i -g vercel`, then run `vercel` (preview) or
 `vercel --prod`.

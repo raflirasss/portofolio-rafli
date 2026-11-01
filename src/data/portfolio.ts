@@ -523,7 +523,7 @@ export const portfolio: Portfolio = {
 
   // ─────────────────────────────────────────────────────────────────── SEO ──
   seo: {
-    siteUrl: 'https://rafliras.vercel.app', // the URL listed on your CV — change if you use another domain
+    siteUrl: 'https://www.rafliras.site', // main domain on Vercel (no trailing slash) — used for canonical URLs, sitemap, OG and the PDF
     title: 'Teuku Muhammad Rafli Rashadifa — Portfolio',
     titleSuffix: 'Rafli Rashadifa',
     description:
