@@ -1,0 +1,32 @@
+---
+import { portfolio } from '../../data/portfolio';
+import SkillCard from '../cards/SkillCard.astro';
+import SectionHeader from '../ui/SectionHeader.astro';
+
+const { skills } = portfolio;
+
+// Bento layout on large screens: rows of 3 then 2, repeating (6-column grid).
+const spanFor = (index: number) => {
+  const inRow = index % 5;
+  return inRow < 3 ? 'lg:col-span-2' : 'lg:col-span-3';
+};
+---
+
+<section id="skills" aria-labelledby="skills-title" class="relative py-24 md:py-36">
+  <div class="container-page">
+    <SectionHeader id="skills" />
+    <div class="grid gap-4 md:grid-cols-2 lg:grid-cols-6">
+      {
+        skills.map((category, index) => (
+          <SkillCard
+            category={category}
+            index={index}
+            class={[spanFor(index), skills.length % 2 === 1 && index === skills.length - 1 ? 'md:col-span-2' : '']
+              .join(' ')
+              .trim()}
+          />
+        ))
+      }
+    </div>
+  </div>
+</section>

@@ -1,0 +1,16 @@
+---
+/** Renders a Lucide icon by name — see src/utils/icons.ts for the list. */
+import { icons, type IconName } from '../../utils/icons';
+
+interface Props {
+  name: IconName;
+  size?: number;
+  class?: string;
+  strokeWidth?: number;
+}
+
+const { name, size = 20, class: className, strokeWidth = 1.75 } = Astro.props;
+const Component = icons[name];
+---
+
+<Component size={size} class={className} stroke-width={strokeWidth} aria-hidden="true" />

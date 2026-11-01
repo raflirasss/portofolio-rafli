@@ -1,0 +1,22 @@
+---
+import { portfolio } from '../../data/portfolio';
+import CertificateCard from '../cards/CertificateCard.astro';
+import SectionHeader from '../ui/SectionHeader.astro';
+
+const { certificates } = portfolio;
+---
+
+<section id="certificates" aria-labelledby="certificates-title" class="relative py-24 md:py-36">
+  <div class="container-page">
+    <SectionHeader id="certificates" />
+    {
+      certificates.length === 1 ? (
+        <CertificateCard certificate={certificates[0]!} index={0} wide />
+      ) : (
+        <div class="grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
+          {certificates.map((certificate, index) => <CertificateCard certificate={certificate} index={index} />)}
+        </div>
+      )
+    }
+  </div>
+</section>

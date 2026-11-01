@@ -1,0 +1,94 @@
+---
+import { ClientRouter } from 'astro:transitions';
+import { portfolio } from '../../data/portfolio';
+import { absoluteUrl } from '../../utils/content';
+
+interface Props {
+  /** Page title. Sub-pages get " — <titleSuffix>" appended automatically. */
+  title?: string;
+  description?: string;
+  image?: string;
+  type?: 'website' | 'article';
+}
+
+const { seo, personal, socials } = portfolio;
+const { title, description = seo.description, image = seo.ogImage, type = 'website' } = Astro.props;
+
+const fullTitle = title ? `${title} — ${seo.titleSuffix}` : seo.title;
+const canonical = absoluteUrl(Astro.url.pathname);
+const ogImage = absoluteUrl(image);
+
+const sameAs = socials.filter((social) => social.url).map((social) => social.url);
+const personSchema = {
+  '@context': 'https://schema.org',
+  '@type': 'Person',
+  name: personal.fullName,
+  email: `mailto:${personal.email}`,
+  url: seo.siteUrl,
+  jobTitle: personal.role,
+  ...(sameAs.length > 0 && { sameAs }),
+};
+---
+
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+<title>{fullTitle}</title>
+<meta name="description" content={description} />
+<meta name="keywords" content={seo.keywords.join(', ')} />
+<meta name="author" content={personal.fullName} />
+<link rel="canonical" href={canonical} />
+<meta name="generator" content={Astro.generator} />
+
+<link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+<link rel="icon" href="/favicon-32.png" sizes="32x32" type="image/png" />
+<link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+<link rel="sitemap" href="/sitemap-index.xml" />
+<meta name="theme-color" content="#f4f2ed" media="(prefers-color-scheme: light)" />
+<meta name="theme-color" content="#09090b" media="(prefers-color-scheme: dark)" />
+
+<!-- Open Graph -->
+<meta property="og:type" content={type} />
+<meta property="og:site_name" content={personal.fullName} />
+<meta property="og:title" content={fullTitle} />
+<meta property="og:description" content={description} />
+<meta property="og:url" content={canonical} />
+<meta property="og:image" content={ogImage} />
+<meta property="og:image:width" content="1200" />
+<meta property="og:image:height" content="630" />
+<meta property="og:locale" content={seo.locale} />
+
+<!-- Twitter -->
+<meta name="twitter:card" content="summary_large_image" />
+<meta name="twitter:title" content={fullTitle} />
+<meta name="twitter:description" content={description} />
+<meta name="twitter:image" content={ogImage} />
+{seo.twitterHandle && <meta name="twitter:site" content={seo.twitterHandle} />}
+
+<script type="application/ld+json" set:html={JSON.stringify(personSchema)} />
+
+<!--
+  Theme: runs before paint to avoid a flash. Uses the saved choice, otherwise the
+  system preference. Re-applied after every client-side navigation.
+-->
+<script is:inline>
+  (function () {
+    const getTheme = () => {
+      try {
+        const saved = localStorage.getItem('theme');
+        if (saved === 'light' || saved === 'dark') return saved;
+      } catch (_) {}
+      return matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+    };
+    const apply = (doc) => {
+      doc.documentElement.dataset.theme = getTheme();
+      doc.documentElement.classList.add('js');
+    };
+    apply(document);
+    if (!window.__themeListeners) {
+      window.__themeListeners = true;
+      document.addEventListener('astro:before-swap', (event) => apply(event.newDocument));
+    }
+  })();
+</script>
+
+<ClientRouter fallback="swap" />

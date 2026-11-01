@@ -1,0 +1,94 @@
+---
+/**
+ * Project cover. Uses `project.cover` when provided; otherwise draws an abstract
+ * cover from `project.palette` so every card still looks intentional.
+ */
+import type { Project } from '../../types/portfolio';
+import { initials } from '../../utils/content';
+import SmartImage from './SmartImage.astro';
+
+interface Props {
+  project: Project;
+  index: number;
+  variant?: 'card' | 'hero';
+  class?: string;
+  priority?: boolean;
+}
+
+const { project, index, variant = 'card', class: className, priority = false } = Astro.props;
+const [from, to] = project.palette;
+const number = String(index + 1).padStart(2, '0');
+---
+
+<div
+  class:list={['relative isolate overflow-hidden bg-subtle', className]}
+  style={`--from:${from};--to:${to};`}
+  transition:name={`cover-${project.slug}`}
+>
+  {
+    project.cover ? (
+      <SmartImage
+        src={project.cover.src}
+        alt={project.cover.alt}
+        position={project.cover.position}
+        class="cover-media absolute inset-0 size-full object-cover"
+        sizes={variant === 'hero' ? '100vw' : '(min-width: 1024px) 50vw, 100vw'}
+        priority={priority}
+      />
+    ) : (
+      <div class="cover-media grain absolute inset-0" aria-hidden="true">
+        <div class="cover-gradient absolute inset-0" />
+        <svg class="absolute inset-0 size-full opacity-[0.18] mix-blend-overlay" aria-hidden="true">
+          <defs>
+            <pattern id={`grid-${project.slug}-${variant}`} width="48" height="48" patternUnits="userSpaceOnUse">
+              <path d="M48 0H0V48" fill="none" stroke="white" stroke-width="1" />
+            </pattern>
+          </defs>
+          <rect width="100%" height="100%" fill={`url(#grid-${project.slug}-${variant})`} />
+        </svg>
+        <div class="cover-orb absolute" />
+        <span
+          class:list={[
+            'accent-serif absolute right-[6%] bottom-[-0.12em] leading-none text-white/90 mix-blend-overlay select-none',
+            variant === 'hero' ? 'text-[clamp(10rem,30vw,26rem)]' : 'text-[clamp(7rem,18vw,13rem)]',
+          ]}
+        >
+          {initials(project.title)}
+        </span>
+        {variant === 'hero' && (
+          <span class="absolute top-6 left-6 font-mono text-[0.7rem] tracking-[0.12em] text-white/80 uppercase md:top-8 md:left-8">
+            {number} — {project.category}
+          </span>
+        )}
+      </div>
+    )
+  }
+</div>
+
+<style>
+  .cover-gradient {
+    background:
+      radial-gradient(120% 90% at 0% 0%, color-mix(in oklab, var(--from) 92%, white) 0%, transparent 55%),
+      radial-gradient(90% 120% at 100% 100%, var(--to) 0%, transparent 70%),
+      linear-gradient(135deg, var(--from), var(--to));
+  }
+  .cover-orb {
+    width: 55%;
+    aspect-ratio: 1;
+    top: 18%;
+    left: 12%;
+    border-radius: 9999px;
+    background: radial-gradient(circle at 30% 30%, rgb(255 255 255 / 0.55), transparent 62%);
+    filter: blur(6px);
+    transition: transform 1.2s var(--ease-apple);
+  }
+  .cover-media {
+    transition: transform 1.2s var(--ease-apple);
+  }
+  :global(.group:hover) .cover-media {
+    transform: scale(1.04);
+  }
+  :global(.group:hover) .cover-orb {
+    transform: translate3d(12%, -6%, 0) scale(1.08);
+  }
+</style>

@@ -1,0 +1,239 @@
+---
+import type { GetStaticPaths } from 'astro';
+import { ArrowLeft, ArrowRight, ArrowUpRight } from '@lucide/astro';
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import BrandIcon from '../../components/ui/BrandIcon.astro';
+import Button from '../../components/ui/Button.astro';
+import ProjectCover from '../../components/ui/ProjectCover.astro';
+import SmartImage from '../../components/ui/SmartImage.astro';
+import Tag from '../../components/ui/Tag.astro';
+import { portfolio } from '../../data/portfolio';
+import type { Project } from '../../types/portfolio';
+import { getProjectNeighbours, projectUrl } from '../../utils/content';
+
+export const getStaticPaths = (() =>
+  portfolio.projects.map((project, index) => ({
+    params: { slug: project.slug },
+    props: { project, index },
+  }))) satisfies GetStaticPaths;
+
+interface Props {
+  project: Project;
+  index: number;
+}
+
+const { project, index } = Astro.props;
+const { next } = getProjectNeighbours(project.slug);
+const nextIndex = portfolio.projects.findIndex((item) => item.slug === next?.slug);
+
+const facts = [
+  { label: 'Category', value: project.category },
+  project.status && { label: 'Status', value: project.status },
+  project.year && { label: 'Year', value: project.year },
+  project.role && { label: 'Role', value: project.role },
+  project.company && { label: 'Company', value: project.company },
+].filter((fact): fact is { label: string; value: string } => Boolean(fact));
+---
+
+<BaseLayout title={project.title} description={project.summary} type="article">
+  <article class="pt-28 md:pt-36">
+    <div class="container-page">
+      <a
+        href="/#projects"
+        class="group fade-up mb-10 inline-flex items-center gap-2 text-sm font-medium text-muted transition-colors hover:text-ink"
+      >
+        <span class="inline-flex size-8 items-center justify-center rounded-full border border-line-strong transition-transform duration-500 ease-apple group-hover:-translate-x-1">
+          <ArrowLeft size={15} aria-hidden="true" />
+        </span>
+        All projects
+      </a>
+
+      <header class="grid gap-8 pb-12 md:pb-16 lg:grid-cols-12 lg:items-end">
+        <div class="lg:col-span-8">
+          <p class="eyebrow fade-up mb-6 flex flex-wrap items-center gap-3" style="--d:1">
+            <span class="text-accent">({String(index + 1).padStart(2, '0')})</span>
+            <span class="h-px w-8 bg-line-strong" aria-hidden="true"></span>
+            {project.category}
+          </p>
+          <h1
+            class:list={[
+              'display text-balance',
+              project.title.length > 28 ? 'text-[clamp(2.4rem,5.6vw,5rem)]' : 'text-[clamp(2.75rem,8vw,7rem)]',
+            ]}
+          >
+            <span class="line-mask"><span style="--d:2">{project.title}</span></span>
+          </h1>
+        </div>
+        <p class="fade-up max-w-md text-pretty text-muted md:text-lg lg:col-span-4 lg:justify-self-end" style="--d:3">
+          {project.summary}
+        </p>
+      </header>
+    </div>
+
+    <div class="container-page">
+      <ProjectCover
+        project={project}
+        index={index}
+        variant="hero"
+        priority
+        class="aspect-[16/10] rounded-[2rem] md:aspect-[21/9] md:rounded-[2.5rem]"
+      />
+    </div>
+
+    <div class="container-page grid gap-14 py-16 md:py-24 lg:grid-cols-12 lg:gap-10">
+      <!-- Sidebar facts -->
+      <aside class="lg:col-span-4" aria-label="Project facts">
+        <div class="lg:sticky lg:top-28">
+          <dl class="border-t border-line">
+            {
+              facts.map((fact) => (
+                <div class="flex items-baseline justify-between gap-6 border-b border-line py-4">
+                  <dt class="eyebrow">{fact.label}</dt>
+                  <dd class="text-right text-sm font-medium">{fact.value}</dd>
+                </div>
+              ))
+            }
+          </dl>
+
+          {
+            project.tech.length > 0 && (
+              <div class="mt-8">
+                <p class="eyebrow mb-3">Technology</p>
+                <ul class="flex flex-wrap gap-1.5">
+                  {project.tech.map((tech) => <li><Tag tone="outline">{tech}</Tag></li>)}
+                </ul>
+              </div>
+            )
+          }
+
+          <div class="mt-6">
+            <p class="eyebrow mb-3">Tags</p>
+            <ul class="flex flex-wrap gap-1.5">
+              {project.tags.map((tag) => <li><Tag>{tag}</Tag></li>)}
+            </ul>
+          </div>
+
+          {
+            (project.links?.live || project.links?.repo || project.links?.more?.length) && (
+              <div class="mt-8 flex flex-wrap gap-2">
+                {project.links.live && (
+                  <Button href={project.links.live}>
+                    View live <ArrowUpRight size={16} aria-hidden="true" />
+                  </Button>
+                )}
+                {project.links.repo && (
+                  <Button href={project.links.repo} variant="secondary">
+                    <BrandIcon platform="github" size={16} /> Source code
+                  </Button>
+                )}
+                {project.links.more?.map((link) => (
+                  <Button href={link.url} variant="secondary">
+                    <BrandIcon platform={link.platform} size={16} /> {link.label}
+                  </Button>
+                ))}
+              </div>
+            )
+          }
+        </div>
+      </aside>
+
+      <!-- Body -->
+      <div class="lg:col-span-7 lg:col-start-6">
+        <p class="mb-14 text-[clamp(1.35rem,2.6vw,1.9rem)] leading-snug font-medium tracking-[-0.025em] text-pretty" data-reveal>
+          {project.description ?? project.summary}
+        </p>
+
+        {
+          project.details?.map((block, blockIndex) => (
+            <section class="border-t border-line py-10" data-reveal aria-labelledby={`detail-${blockIndex}`}>
+              <div class="grid gap-4 md:grid-cols-3 md:gap-8">
+                <h2 id={`detail-${blockIndex}`} class="flex items-baseline gap-3 text-lg font-semibold tracking-tight">
+                  <span class="font-mono text-xs text-accent">{String(blockIndex + 1).padStart(2, '0')}</span>
+                  {block.heading}
+                </h2>
+                <div class="text-pretty text-ink-soft md:col-span-2 md:text-[1.05rem] md:leading-relaxed">
+                  {Array.isArray(block.body) ? (
+                    <ul class="space-y-2.5">
+                      {block.body.map((item) => (
+                        <li class="flex gap-3">
+                          <span class="mt-2.5 size-1.5 shrink-0 rounded-full bg-accent" aria-hidden="true" />
+                          {item}
+                        </li>
+                      ))}
+                    </ul>
+                  ) : (
+                    <p>{block.body}</p>
+                  )}
+                </div>
+              </div>
+            </section>
+          ))
+        }
+      </div>
+    </div>
+
+    <!-- Gallery -->
+    {
+      project.gallery && project.gallery.length > 0 && (
+        <section class="container-page pb-16 md:pb-24" aria-labelledby="gallery-title">
+          <h2 id="gallery-title" class="eyebrow mb-8 flex items-center gap-3">
+            <span class="h-px w-8 bg-line-strong" aria-hidden="true" />
+            Gallery
+          </h2>
+          <div class="flex flex-col gap-12 md:gap-16">
+            {project.gallery.map((image) => (
+              <figure data-reveal>
+                <a
+                  href={typeof image.src === 'string' ? image.src : image.src.src}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  class="group block overflow-hidden rounded-[1.5rem] border border-line bg-subtle md:rounded-[2rem]"
+                  aria-label={`Open full-size image: ${image.alt}`}
+                >
+                  <SmartImage
+                    src={image.src}
+                    alt={image.alt}
+                    widths={[640, 1000, 1400, 1900]}
+                    sizes="(min-width: 1312px) 1232px, 100vw"
+                    class="h-auto w-full transition-transform duration-[1.2s] ease-apple group-hover:scale-[1.015]"
+                  />
+                </a>
+                {image.caption && (
+                  <figcaption class="mt-4 flex max-w-2xl gap-3 text-sm text-pretty text-muted">
+                    <span class="mt-2 h-px w-6 shrink-0 bg-line-strong" aria-hidden="true" />
+                    {image.caption}
+                  </figcaption>
+                )}
+              </figure>
+            ))}
+          </div>
+        </section>
+      )
+    }
+
+    <!-- Next project -->
+    {
+      next && next.slug !== project.slug && (
+        <nav aria-label="Next project" class="border-t border-line">
+          <a href={projectUrl(next)} class="group container-page grid items-center gap-8 py-16 md:grid-cols-12 md:py-24">
+            <div class="md:col-span-7">
+              <p class="eyebrow mb-4">Next project</p>
+              <p class="display flex items-center gap-4 text-[clamp(2.4rem,6vw,5rem)]">
+                <span class="link-underline pb-1">{next.title}</span>
+                <ArrowRight
+                  size={44}
+                  stroke-width={1.5}
+                  class="shrink-0 transition-transform duration-700 ease-apple group-hover:translate-x-3"
+                  aria-hidden="true"
+                />
+              </p>
+            </div>
+            <div class="overflow-hidden rounded-[1.75rem] md:col-span-5">
+              <ProjectCover project={next} index={nextIndex} class="aspect-[16/10]" />
+            </div>
+          </a>
+        </nav>
+      )
+    }
+  </article>
+</BaseLayout>

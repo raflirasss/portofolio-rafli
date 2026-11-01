@@ -1,0 +1,26 @@
+---
+import { portfolio } from '../../data/portfolio';
+
+interface Props {
+  class?: string;
+}
+
+const { monogram, fullName } = portfolio.personal;
+const letters = monogram.toUpperCase().slice(0, 4);
+// Four letters stack into a 2×2 grid; shorter monograms sit on one line.
+const rows = letters.length === 4 ? [letters.slice(0, 2), letters.slice(2)] : [letters];
+---
+
+<a
+  href="/#top"
+  class:list={[
+    'group relative inline-flex size-10 shrink-0 flex-col items-center justify-center rounded-xl bg-ink font-mono text-[0.68rem] leading-[1.05] font-bold tracking-[0.06em] text-bg transition-transform duration-500 ease-apple hover:-rotate-6 hover:scale-105 active:scale-95',
+    Astro.props.class,
+  ]}
+  aria-label={`${fullName} — back to top`}
+>
+  {rows.map((row) => <span aria-hidden="true">{row}</span>)}
+  <span
+    class="absolute -right-0.5 -bottom-0.5 size-2.5 rounded-full bg-accent ring-2 ring-bg transition-transform duration-500 ease-spring group-hover:scale-150"
+    aria-hidden="true"></span>
+</a>

@@ -1,0 +1,90 @@
+---
+/**
+ * Hero visual: the monogram at the center with the five disciplines orbiting it.
+ * Pure CSS animation; it stops under `prefers-reduced-motion`.
+ */
+import { portfolio } from '../../data/portfolio';
+
+interface Props {
+  class?: string;
+}
+
+const { disciplines } = portfolio.hero;
+const monogram = portfolio.personal.monogram.toUpperCase();
+const rows = monogram.length === 4 ? [monogram.slice(0, 2), monogram.slice(2)] : [monogram];
+---
+
+<div class:list={['orbit-root relative aspect-square', Astro.props.class]} aria-hidden="true">
+  <div class="orbit-parallax absolute inset-0">
+    <div class="glow absolute inset-[18%] rounded-full"></div>
+
+    <div class="ring absolute inset-[4%] rounded-full border border-dashed border-line-strong"></div>
+    <div class="ring absolute inset-[20%] rounded-full border border-line"></div>
+    <div class="ring absolute inset-[34%] rounded-full border border-line-strong"></div>
+
+    <!-- Inner fast orbit: a single warm dot -->
+    <div class="spin absolute inset-[20%]" style="--dur:18s">
+      <span class="absolute top-0 left-1/2 size-2 -translate-1/2 rounded-full bg-warm shadow-[0_0_18px_var(--warm)]"></span>
+    </div>
+
+    <!-- Core monogram -->
+    <div class="core absolute inset-[38%] flex flex-col items-center justify-center rounded-full bg-ink font-mono text-[clamp(0.9rem,2.2vw,1.35rem)] leading-[1.05] font-bold tracking-[0.08em] text-bg">
+      {rows.map((row) => <span>{row}</span>)}
+    </div>
+
+    <!-- Outer orbit: discipline chips (stay upright while orbiting) -->
+    <div class="spin absolute inset-[4%]" style="--dur:90s">
+      {
+        disciplines.map((discipline, index) => (
+          <span
+            class="node absolute top-1/2 left-1/2"
+            style={`--a:${(360 / disciplines.length) * index - 90}deg`}
+          >
+            <span class="spin-reverse block -translate-1/2" style="--dur:90s">
+              <span class="chip block rounded-full border border-line-strong px-3 py-1.5 text-[clamp(0.62rem,1.3vw,0.78rem)] font-medium whitespace-nowrap text-ink-soft backdrop-blur-md">
+                {discipline}
+              </span>
+            </span>
+          </span>
+        ))
+      }
+    </div>
+  </div>
+</div>
+
+<style>
+  .orbit-root {
+    container-type: inline-size;
+  }
+  .orbit-parallax {
+    translate: calc(var(--px, 0) * -18px) calc(var(--py, 0) * -18px);
+    transition: translate 0.9s var(--ease-apple);
+  }
+  .glow {
+    background: radial-gradient(circle, color-mix(in oklab, var(--accent) 38%, transparent) 0%, transparent 68%);
+    filter: blur(28px);
+  }
+  .core {
+    box-shadow:
+      0 0 0 10px color-mix(in oklab, var(--ink) 6%, transparent),
+      0 30px 60px -20px rgb(var(--shadow-color) / 0.5);
+  }
+  .spin {
+    animation: spin var(--dur) linear infinite;
+  }
+  .spin-reverse {
+    animation: spin var(--dur) linear infinite reverse;
+  }
+  /* Radius = half the orbit box (which is 92% of the root). */
+  .node {
+    transform: rotate(var(--a)) translateX(46cqi) rotate(calc(var(--a) * -1));
+  }
+  .chip {
+    background-color: var(--glass);
+    box-shadow: 0 6px 20px -10px rgb(var(--shadow-color) / 0.35);
+  }
+  .orbit-root:hover .spin,
+  .orbit-root:hover .spin-reverse {
+    animation-play-state: paused;
+  }
+</style>

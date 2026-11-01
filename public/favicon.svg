@@ -1,0 +1,7 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64">
+  <rect width="64" height="64" rx="16" fill="#2f45f5"/>
+  <g font-family="Consolas, 'JetBrains Mono', ui-monospace, monospace" font-weight="700" font-size="21" fill="#fff" text-anchor="middle" letter-spacing="1">
+    <text x="32" y="29">TM</text>
+    <text x="32" y="50">RR</text>
+  </g>
+</svg>

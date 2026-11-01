@@ -1,0 +1,90 @@
+---
+import { portfolio } from '../../data/portfolio';
+import SectionHeader from '../ui/SectionHeader.astro';
+import SmartImage from '../ui/SmartImage.astro';
+
+const { milestones } = portfolio;
+---
+
+<section id="milestones" aria-labelledby="milestones-title" class="relative py-24 md:py-36">
+  <div class="container-page">
+    <SectionHeader id="milestones" />
+
+    <ol class="flex flex-col gap-20 md:gap-28">
+      {
+        milestones.map((milestone, index) => (
+          <li class="grid items-center gap-10 lg:grid-cols-12 lg:gap-16">
+            <figure
+              class:list={['group relative lg:col-span-6', index % 2 === 1 && 'lg:order-2 lg:col-start-7']}
+              data-reveal
+            >
+              <div class="milestone-frame relative overflow-hidden rounded-[2rem] bg-subtle">
+                <SmartImage
+                  src={milestone.image.src}
+                  alt={milestone.image.alt}
+                  position={milestone.image.position}
+                  widths={[480, 800, 1200]}
+                  sizes="(min-width: 1024px) 45vw, 100vw"
+                  class="aspect-[4/5] size-full object-cover transition-transform duration-[1.6s] ease-apple group-hover:scale-[1.025]"
+                />
+                <span class="absolute top-4 left-4 inline-flex items-center gap-2 rounded-full bg-bg/85 px-3 py-1.5 font-mono text-[0.7rem] tracking-[0.08em] text-ink uppercase backdrop-blur">
+                  <span class="size-1.5 rounded-full bg-accent" aria-hidden="true" />
+                  {milestone.date}
+                </span>
+              </div>
+              {milestone.caption && (
+                <figcaption class="mt-4 flex gap-3 text-sm text-pretty text-muted">
+                  <span class="mt-2 h-px w-6 shrink-0 bg-line-strong" aria-hidden="true" />
+                  {milestone.caption}
+                </figcaption>
+              )}
+            </figure>
+
+            <div class:list={['relative lg:col-span-6', index % 2 === 1 && 'lg:order-1 lg:col-start-1']}>
+              {milestone.year && (
+                <p
+                  class="milestone-year pointer-events-none mb-2 text-[clamp(5rem,13vw,10rem)] leading-[0.8] font-semibold tracking-[-0.06em] select-none"
+                  aria-hidden="true"
+                  data-reveal
+                >
+                  {milestone.year}
+                </p>
+              )}
+              <p class="eyebrow mb-4" data-reveal style="--d:1">
+                {milestone.organization}
+              </p>
+              <h3 class="text-[clamp(1.9rem,3.6vw,3rem)] leading-[1.05] font-semibold tracking-[-0.035em] text-balance" data-reveal style="--d:2">
+                {milestone.title}
+              </h3>
+              {milestone.description && (
+                <p class="mt-6 max-w-lg text-pretty text-ink-soft md:text-[1.05rem] md:leading-relaxed" data-reveal style="--d:3">
+                  {milestone.description}
+                </p>
+              )}
+              {milestone.facts && milestone.facts.length > 0 && (
+                <dl class="mt-10 grid border-t border-line sm:grid-cols-2" data-reveal style="--d:4">
+                  {milestone.facts.map((fact) => (
+                    <div class="border-b border-line py-4 sm:odd:pr-6 sm:even:border-l sm:even:pl-6">
+                      <dt class="eyebrow mb-1">{fact.label}</dt>
+                      <dd class="font-medium">{fact.value}</dd>
+                    </div>
+                  ))}
+                </dl>
+              )}
+            </div>
+          </li>
+        ))
+      }
+    </ol>
+  </div>
+</section>
+
+<style>
+  .milestone-frame {
+    box-shadow: 0 40px 80px -40px rgb(var(--shadow-color) / 0.45);
+  }
+  .milestone-year {
+    color: transparent;
+    -webkit-text-stroke: 1px var(--line-strong);
+  }
+</style>

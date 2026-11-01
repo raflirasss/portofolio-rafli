@@ -1,0 +1,48 @@
+---
+import { portfolio } from '../../data/portfolio';
+import { accent, sectionNumber, type SectionId } from '../../utils/content';
+
+interface Props {
+  id: SectionId;
+  align?: 'left' | 'center';
+}
+
+const { id, align = 'left' } = Astro.props;
+const copy = portfolio.sections[id];
+---
+
+<header
+  class:list={[
+    'mb-12 grid gap-6 md:mb-16',
+    align === 'left' ? 'lg:grid-cols-12 lg:items-end' : 'mx-auto max-w-3xl text-center',
+  ]}
+>
+  <div class:list={[align === 'left' && 'lg:col-span-8']}>
+    <p class:list={['eyebrow mb-5 flex items-center gap-3', align === 'center' && 'justify-center']} data-reveal>
+      <span class="text-accent">({sectionNumber(id)})</span>
+      <span class="h-px w-8 bg-line-strong" aria-hidden="true"></span>
+      {copy.label}
+    </p>
+    <h2
+      id={`${id}-title`}
+      class="display text-[clamp(2.4rem,6vw,4.75rem)] text-balance"
+      data-reveal
+      style="--d:1"
+      set:html={accent(copy.title)}
+    />
+  </div>
+  {
+    copy.intro && (
+      <p
+        class:list={[
+          'max-w-md text-pretty text-muted md:text-lg',
+          align === 'left' ? 'lg:col-span-4 lg:justify-self-end lg:pb-2' : 'mx-auto',
+        ]}
+        data-reveal
+        style="--d:2"
+      >
+        {copy.intro}
+      </p>
+    )
+  }
+</header>

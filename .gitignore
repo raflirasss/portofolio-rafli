@@ -1,6 +1,23 @@
-.vercel
-node_modules
-.next
-out
-*.tsbuildinfo
+# build output
+dist/
+.vercel/
+.astro/
+
+# dependencies
+node_modules/
+
+# logs
 npm-debug.log*
+
+# environment
+.env
+.env.*
+
+# OS / editor
+.DS_Store
+Thumbs.db
+.vscode/*
+!.vscode/extensions.json
+
+# local tooling
+.claude/

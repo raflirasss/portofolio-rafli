@@ -1,0 +1,127 @@
+---
+import { ArrowUpRight, Check, Copy } from '@lucide/astro';
+import { portfolio } from '../../data/portfolio';
+import { accent, activeSocials, formatPhone, mailtoLink, sectionNumber, whatsappLink } from '../../utils/content';
+import type { SocialPlatform } from '../../types/portfolio';
+import BrandIcon from '../ui/BrandIcon.astro';
+
+const { personal, sections } = portfolio;
+const copy = sections.contact;
+
+interface Channel {
+  platform: SocialPlatform;
+  label: string;
+  value: string;
+  href: string;
+}
+
+const channels: Channel[] = [
+  { platform: 'email', label: 'Email', value: personal.email, href: mailtoLink() },
+  { platform: 'whatsapp', label: 'WhatsApp', value: formatPhone(), href: whatsappLink() },
+  ...activeSocials.map((social) => ({
+    platform: social.platform,
+    label: social.label,
+    value: social.handle ?? social.url.replace(/^https?:\/\/(www\.)?/, '').replace(/\/$/, ''),
+    href: social.url,
+  })),
+];
+---
+
+<section id="contact" aria-labelledby="contact-title" class="relative isolate overflow-hidden py-24 md:py-40">
+  <div class="contact-glow pointer-events-none absolute inset-0 -z-10" aria-hidden="true"></div>
+
+  <div class="container-page">
+    <div class="mx-auto max-w-5xl text-center">
+      <p class="eyebrow mb-6 flex items-center justify-center gap-3" data-reveal>
+        <span class="text-accent">({sectionNumber('contact')})</span>
+        <span class="h-px w-8 bg-line-strong" aria-hidden="true"></span>
+        {copy.label}
+      </p>
+      <h2
+        id="contact-title"
+        class="display text-[clamp(2.8rem,8.5vw,7.5rem)] text-balance"
+        data-reveal
+        style="--d:1"
+        set:html={accent(copy.title)}
+      />
+      {copy.intro && (
+        <p class="mx-auto mt-8 max-w-xl text-pretty text-muted md:text-lg" data-reveal style="--d:2">
+          {copy.intro}
+        </p>
+      )}
+
+      <!-- Primary CTA: big email with copy -->
+      <div class="mt-12 flex flex-col items-center justify-center gap-3 sm:flex-row" data-reveal style="--d:3">
+        <a
+          href={mailtoLink()}
+          class="group/cta inline-flex h-16 items-center gap-4 rounded-full bg-ink pr-2 pl-7 text-lg font-medium text-bg shadow-[0_24px_50px_-24px_rgb(var(--shadow-color)/0.7)] transition-[translate,box-shadow] duration-500 ease-apple hover:-translate-y-1 active:scale-[0.98]"
+        >
+          {copy.cta}
+          <span class="inline-flex size-12 items-center justify-center rounded-full bg-accent text-accent-ink transition-transform duration-700 ease-spring group-hover/cta:rotate-45">
+            <ArrowUpRight size={20} aria-hidden="true" />
+          </span>
+        </a>
+        <button
+          type="button"
+          data-copy={personal.email}
+          class="copy-btn group/copy inline-flex h-16 items-center gap-3 rounded-full border border-line-strong bg-elevated/70 px-6 font-mono text-sm backdrop-blur transition-[border-color,scale] duration-300 hover:border-ink active:scale-[0.98]"
+          aria-label={`Copy email address ${personal.email}`}
+        >
+          <span class="relative inline-flex size-4">
+            <Copy size={16} class="copy-icon absolute transition-[scale,opacity] duration-300" aria-hidden="true" />
+            <Check size={16} class="check-icon absolute text-emerald-500 transition-[scale,opacity] duration-300" aria-hidden="true" />
+          </span>
+          <span data-copy-label>{personal.email}</span>
+        </button>
+      </div>
+    </div>
+
+    <!-- Channels -->
+    <ul class="mx-auto mt-20 flex max-w-5xl flex-wrap justify-center gap-3">
+      {
+        channels.map((channel, index) => (
+          <li class="w-full sm:w-[calc(50%-0.375rem)] lg:w-[calc(33.333%-0.5rem)]" data-reveal style={`--d:${index}`}>
+            <a
+              href={channel.href}
+              {...(channel.platform !== 'email' && { target: '_blank', rel: 'noopener noreferrer' })}
+              class="card-surface group flex items-center gap-4 rounded-2xl p-4 pr-5 transition-[translate,border-color,background-color] duration-500 ease-apple hover:-translate-y-0.5 hover:border-line-strong"
+            >
+              <span class="inline-flex size-12 shrink-0 items-center justify-center rounded-xl bg-subtle transition-[background-color,color] duration-500 group-hover:bg-ink group-hover:text-bg">
+                <BrandIcon platform={channel.platform} size={20} />
+              </span>
+              <span class="min-w-0 flex-1 text-left">
+                <span class="block text-sm font-semibold">{channel.label}</span>
+                <span class="block truncate text-sm text-muted">{channel.value}</span>
+              </span>
+              <ArrowUpRight
+                size={18}
+                class="shrink-0 text-muted transition-[translate,color] duration-500 ease-apple group-hover:translate-x-0.5 group-hover:-translate-y-0.5 group-hover:text-ink"
+                aria-hidden="true"
+              />
+            </a>
+          </li>
+        ))
+      }
+    </ul>
+  </div>
+</section>
+
+<style>
+  .contact-glow {
+    background:
+      radial-gradient(50% 45% at 50% 30%, color-mix(in oklab, var(--accent) 13%, transparent), transparent 70%),
+      radial-gradient(30% 30% at 75% 70%, color-mix(in oklab, var(--warm) 8%, transparent), transparent 70%);
+  }
+  .check-icon {
+    opacity: 0;
+    scale: 0.5;
+  }
+  .copy-btn[data-copied='true'] .copy-icon {
+    opacity: 0;
+    scale: 0.5;
+  }
+  .copy-btn[data-copied='true'] .check-icon {
+    opacity: 1;
+    scale: 1;
+  }
+</style>

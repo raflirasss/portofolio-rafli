@@ -1,0 +1,37 @@
+---
+import type { HTMLAttributes } from 'astro/types';
+
+type Props = HTMLAttributes<'a'> & {
+  href: string;
+  variant?: 'primary' | 'secondary';
+  size?: 'md' | 'lg';
+};
+
+const { href, variant = 'primary', size = 'md', class: className, ...rest } = Astro.props;
+const external = /^https?:\/\//.test(href);
+---
+
+<a
+  href={href}
+  class:list={[
+    'group/btn relative inline-flex items-center justify-center gap-2.5 overflow-hidden rounded-full font-medium whitespace-nowrap transition-[translate,background-color,border-color,box-shadow,scale] duration-500 ease-apple select-none active:scale-[0.97]',
+    size === 'md' ? 'h-11 px-5 text-sm' : 'h-13 px-7 text-[0.95rem]',
+    variant === 'primary' &&
+      'bg-ink text-bg shadow-[0_10px_30px_-14px_rgb(var(--shadow-color)/0.55)] hover:-translate-y-0.5 hover:shadow-[0_20px_40px_-16px_rgb(var(--shadow-color)/0.65)]',
+    variant === 'secondary' &&
+      'border border-line-strong bg-elevated/60 text-ink backdrop-blur hover:-translate-y-0.5 hover:border-ink/40',
+    className,
+  ]}
+  {...(external && { target: '_blank', rel: 'noopener noreferrer' })}
+  {...rest}
+>
+  {
+    variant === 'primary' && (
+      <span
+        class="absolute inset-0 -translate-x-full bg-linear-to-r from-transparent via-white/25 to-transparent transition-transform duration-1000 ease-apple group-hover/btn:translate-x-full dark:via-black/15"
+        aria-hidden="true"
+      />
+    )
+  }
+  <span class="relative inline-flex items-center gap-2.5"><slot /></span>
+</a>

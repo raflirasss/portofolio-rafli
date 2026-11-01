@@ -1,0 +1,100 @@
+---
+import { portfolio } from '../../data/portfolio';
+import { accent, isPlaceholder } from '../../utils/content';
+import SectionHeader from '../ui/SectionHeader.astro';
+import SmartImage from '../ui/SmartImage.astro';
+
+const { about, personal } = portfolio;
+const facts = [
+  ...about.facts,
+  ...(personal.location ? [{ label: 'Based in', value: personal.location }] : []),
+  ...(personal.languages?.length ? [{ label: 'Languages', value: personal.languages.join(', ') }] : []),
+];
+const monogram = personal.monogram.toUpperCase();
+---
+
+<section id="about" aria-labelledby="about-title" class="py-24 md:py-36">
+  <div class="container-page">
+    <SectionHeader id="about" />
+
+    <div class="grid gap-14 lg:grid-cols-12 lg:gap-10">
+      <!-- Portrait / placeholder -->
+      <div class="lg:col-span-4" data-reveal>
+        <figure class="portrait group relative aspect-[4/5] overflow-hidden rounded-[1.75rem] bg-subtle lg:sticky lg:top-28">
+          {
+            personal.photo ? (
+              <SmartImage
+                src={personal.photo.src}
+                alt={personal.photo.alt}
+                position={personal.photo.position}
+                widths={[400, 700, 1000]}
+                class="size-full object-cover transition-transform duration-[1.4s] ease-apple group-hover:scale-[1.03]"
+                sizes="(min-width: 1024px) 33vw, 100vw"
+              />
+            ) : (
+              <div class="portrait-art grain absolute inset-0 flex items-end p-6" aria-hidden="true">
+                <span class="portrait-letters accent-serif absolute -top-[0.08em] -left-[0.04em] text-[11rem] leading-[0.8] text-bg/90 transition-transform duration-[1.4s] ease-apple group-hover:translate-x-2">
+                  {monogram.slice(0, 2)}
+                  <br />
+                  {monogram.slice(2)}
+                </span>
+                <span class="relative font-mono text-[0.7rem] tracking-[0.1em] text-bg/80 uppercase">
+                  {personal.fullName}
+                </span>
+              </div>
+            )
+          }
+        </figure>
+      </div>
+
+      <div class="lg:col-span-8 lg:pl-8">
+        <p
+          class="mb-12 text-[clamp(1.6rem,3.4vw,2.6rem)] leading-[1.15] font-medium tracking-[-0.03em] text-balance"
+          data-reveal
+          set:html={accent(about.statement)}
+        />
+
+        <div class="grid gap-10 md:grid-cols-2">
+          {
+            about.paragraphs.map((paragraph, index) => (
+              <p class="text-pretty text-ink-soft md:text-[1.05rem] md:leading-relaxed" data-reveal style={`--d:${index + 1}`}>
+                {paragraph}
+              </p>
+            ))
+          }
+        </div>
+
+        <dl class="mt-14 grid border-t border-line sm:grid-cols-2">
+          {
+            facts.map((fact, index) => (
+              <div
+                class="group flex items-baseline justify-between gap-6 border-b border-line py-4 sm:odd:pr-6 sm:even:pl-6 sm:even:border-l"
+                data-reveal
+                style={`--d:${index}`}
+              >
+                <dt class="eyebrow shrink-0">{fact.label}</dt>
+                <dd
+                  class:list={[
+                    'text-right text-sm font-medium transition-colors group-hover:text-accent',
+                    isPlaceholder(fact.value) && 'text-muted italic',
+                  ]}
+                >
+                  {fact.value}
+                </dd>
+              </div>
+            ))
+          }
+        </dl>
+      </div>
+    </div>
+  </div>
+</section>
+
+<style>
+  .portrait-art {
+    background:
+      radial-gradient(90% 70% at 100% 0%, color-mix(in oklab, var(--accent) 80%, white 0%), transparent 60%),
+      radial-gradient(80% 60% at 0% 100%, var(--warm), transparent 65%),
+      var(--ink);
+  }
+</style>

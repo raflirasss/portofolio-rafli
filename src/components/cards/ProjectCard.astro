@@ -1,0 +1,156 @@
+---
+import { ArrowUpRight } from '@lucide/astro';
+import type { Project } from '../../types/portfolio';
+import { projectUrl } from '../../utils/content';
+import BrandIcon from '../ui/BrandIcon.astro';
+import ProjectCover from '../ui/ProjectCover.astro';
+import Tag from '../ui/Tag.astro';
+
+interface Props {
+  project: Project;
+  index: number;
+  /** Full-row layout. Defaults to `project.featured`. */
+  wide?: boolean;
+}
+
+const { project, index, wide = !!project.featured } = Astro.props;
+const href = projectUrl(project);
+---
+
+<article
+  class:list={['project-card group relative', wide && 'is-featured']}
+  data-project-card
+  data-category={project.category}
+  data-featured={String(wide)}
+  data-reveal
+  style={`--d:${index % 2}`}
+>
+  <div
+    class="card-surface relative flex h-full flex-col overflow-hidden rounded-[2rem] transition-[translate,box-shadow,border-color] duration-700 ease-apple group-hover:-translate-y-1.5 group-hover:border-line-strong group-hover:shadow-[0_40px_80px_-40px_rgb(var(--shadow-color)/0.45)]"
+    data-spotlight
+  >
+    <div class="card-cover relative m-2 overflow-hidden rounded-[1.6rem]">
+      <ProjectCover project={project} index={index} class="aspect-[16/11] size-full" />
+      <span
+        class="absolute top-4 right-4 inline-flex size-11 items-center justify-center rounded-full bg-bg/85 text-ink backdrop-blur transition-[rotate,scale,background-color] duration-700 ease-spring group-hover:scale-110 group-hover:rotate-45 group-hover:bg-ink group-hover:text-bg"
+        aria-hidden="true"
+      >
+        <ArrowUpRight size={18} />
+      </span>
+    </div>
+
+    <div class="card-body flex flex-1 flex-col p-6 pt-5 md:p-8 md:pt-6">
+      <div class="mb-4 flex flex-wrap items-center gap-x-3 gap-y-1 font-mono text-[0.7rem] tracking-[0.08em] text-muted uppercase">
+        <span>{String(index + 1).padStart(2, '0')}</span>
+        <span class="h-px w-5 bg-line-strong" aria-hidden="true"></span>
+        <span>{project.category}</span>
+        {project.year && <span>· {project.year}</span>}
+        {
+          project.status && (
+            <span class="ml-auto inline-flex items-center gap-1.5 normal-case tracking-normal">
+              <span class:list={['size-1.5 rounded-full', project.status === 'Completed' || project.status === 'Live' ? 'bg-emerald-500' : 'bg-warm']} />
+              {project.status}
+            </span>
+          )
+        }
+      </div>
+
+      <h3 class="mb-3 text-2xl font-semibold tracking-[-0.03em] text-balance md:text-[1.9rem] md:leading-tight">
+        <a href={href} class="card-link outline-none" data-astro-prefetch>
+          {project.title}
+        </a>
+      </h3>
+      <p class="mb-6 max-w-xl text-pretty text-muted">{project.summary}</p>
+
+      <div class="mt-auto flex flex-wrap items-end justify-between gap-4">
+        <ul class="flex flex-wrap gap-1.5" aria-label="Tags">
+          {project.tags.map((tag) => <li><Tag>{tag}</Tag></li>)}
+        </ul>
+        {
+          (project.links?.live || project.links?.repo || project.links?.more?.length) && (
+            <div class="relative z-10 flex gap-1.5">
+              {project.links.live && (
+                <a
+                  href={project.links.live}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  class="inline-flex h-9 items-center gap-1.5 rounded-full border border-line-strong px-3.5 text-xs font-medium transition-colors hover:bg-ink hover:text-bg"
+                >
+                  Live <ArrowUpRight size={13} aria-hidden="true" />
+                </a>
+              )}
+              {project.links.repo && (
+                <a
+                  href={project.links.repo}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  class="inline-flex size-9 items-center justify-center rounded-full border border-line-strong transition-colors hover:bg-ink hover:text-bg"
+                  aria-label={`${project.title} source code on GitHub`}
+                >
+                  <BrandIcon platform="github" size={15} />
+                </a>
+              )}
+              {project.links.more?.map((link) => (
+                <a
+                  href={link.url}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  class="inline-flex size-9 items-center justify-center rounded-full border border-line-strong transition-colors hover:bg-ink hover:text-bg"
+                  aria-label={`${project.title} on ${link.label}`}
+                  title={link.label}
+                >
+                  <BrandIcon platform={link.platform} size={15} />
+                </a>
+              ))}
+            </div>
+          )
+        }
+      </div>
+    </div>
+
+    <div class="spotlight pointer-events-none absolute inset-0 opacity-0 transition-opacity duration-500 group-hover:opacity-100" aria-hidden="true"></div>
+  </div>
+</article>
+
+<style>
+  /* Whole card is clickable through the title link (keeps other links usable). */
+  .card-link::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    border-radius: 2rem;
+  }
+  .card-link:focus-visible::after {
+    outline: 2px solid var(--accent);
+    outline-offset: 3px;
+  }
+  .spotlight {
+    background: radial-gradient(500px circle at var(--mx, 50%) var(--my, 0%), rgb(255 255 255 / 0.07), transparent 60%);
+    mix-blend-mode: plus-lighter;
+  }
+
+  @media (min-width: 64rem) {
+    .project-card.is-featured {
+      grid-column: 1 / -1;
+    }
+    .project-card.is-featured > div {
+      flex-direction: row;
+    }
+    .project-card.is-featured .card-cover {
+      flex: 1.35;
+    }
+    .project-card.is-featured .card-cover > :global(div) {
+      aspect-ratio: auto;
+      height: 100%;
+      min-height: 26rem;
+    }
+    .project-card.is-featured .card-body {
+      flex: 1;
+      justify-content: center;
+      padding: 3rem;
+    }
+    .project-card.is-featured h3 {
+      font-size: clamp(2.2rem, 3.4vw, 3.25rem);
+    }
+  }
+</style>

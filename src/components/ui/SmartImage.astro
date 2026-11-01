@@ -1,0 +1,49 @@
+---
+/**
+ * Picks the right image strategy for an ImageSource:
+ * imported files → optimized <Image>, public paths → plain lazy <img>.
+ */
+import { Image } from 'astro:assets';
+import type { ImageSource } from '../../types/portfolio';
+
+interface Props {
+  src: ImageSource;
+  alt: string;
+  class?: string;
+  widths?: number[];
+  sizes?: string;
+  priority?: boolean;
+  /** CSS object-position for cropped images. */
+  position?: string;
+}
+
+const {
+  src,
+  alt,
+  class: className,
+  widths = [480, 800, 1200, 1600],
+  sizes = '100vw',
+  priority = false,
+  position,
+} = Astro.props;
+const loading = priority ? 'eager' : 'lazy';
+const style = position ? `object-position:${position}` : undefined;
+---
+
+{
+  typeof src === 'string' ? (
+    <img src={src} alt={alt} class={className} style={style} loading={loading} decoding="async" />
+  ) : (
+    <Image
+      src={src}
+      alt={alt}
+      class={className}
+      style={style}
+      widths={[...widths.filter((width) => width < src.width), src.width]}
+      sizes={sizes}
+      quality={82}
+      loading={loading}
+      fetchpriority={priority ? 'high' : 'auto'}
+    />
+  )
+}

@@ -1,0 +1,111 @@
+---
+import { ArrowUpRight, Download } from '@lucide/astro';
+import { portfolio } from '../../data/portfolio';
+import { activeSocials, cvAvailable, mailtoLink, navItems } from '../../utils/content';
+import BrandIcon from '../ui/BrandIcon.astro';
+
+const { personal, cv } = portfolio;
+---
+
+<div
+  id="mobile-menu"
+  class="mobile-menu pointer-events-auto fixed inset-0 -z-10 flex flex-col overflow-y-auto bg-bg/95 px-5 pt-24 pb-8 backdrop-blur-2xl lg:hidden"
+  data-mobile-menu
+  data-open="false"
+  inert
+>
+  <nav aria-label="Mobile">
+    <ol class="flex flex-col">
+      {
+        navItems.map((item, index) => (
+          <li class="menu-item border-b border-line" style={`--i:${index}`}>
+            <a
+              href={item.href}
+              data-nav-link={item.id}
+              data-menu-close
+              class="group flex items-baseline justify-between py-3.5 text-[clamp(1.9rem,8vw,2.75rem)] leading-none font-medium tracking-[-0.035em] transition-colors aria-[current=true]:text-accent"
+            >
+              <span>{item.label}</span>
+              <span class="font-mono text-xs text-muted">{String(index).padStart(2, '0')}</span>
+            </a>
+          </li>
+        ))
+      }
+    </ol>
+  </nav>
+
+  <div class="menu-item mt-auto flex flex-col gap-5 pt-10" style={`--i:${navItems.length}`}>
+    <div class="flex flex-wrap gap-2">
+      {
+        cvAvailable && (
+          <a
+            href={cv.path}
+            download={cv.downloadName}
+            class="inline-flex h-11 items-center gap-2 rounded-full bg-ink px-5 text-sm font-medium text-bg"
+          >
+            <Download size={16} aria-hidden="true" /> Download CV
+          </a>
+        )
+      }
+      <a
+        href={mailtoLink()}
+        class="inline-flex h-11 items-center gap-2 rounded-full border border-line-strong px-5 text-sm font-medium"
+      >
+        {personal.email}
+        <ArrowUpRight size={16} aria-hidden="true" />
+      </a>
+    </div>
+    {
+      activeSocials.length > 0 && (
+        <ul class="flex gap-2">
+          {activeSocials.map((social) => (
+            <li>
+              <a
+                href={social.url}
+                target="_blank"
+                rel="noopener noreferrer"
+                class="inline-flex size-11 items-center justify-center rounded-full border border-line-strong"
+                aria-label={social.label}
+              >
+                <BrandIcon platform={social.platform} size={18} />
+              </a>
+            </li>
+          ))}
+        </ul>
+      )
+    }
+  </div>
+</div>
+
+<style>
+  .mobile-menu {
+    visibility: hidden;
+    opacity: 0;
+    clip-path: inset(0 0 100% 0 round 0 0 2rem 2rem);
+    transition:
+      clip-path 0.7s var(--ease-apple),
+      opacity 0.4s var(--ease-apple),
+      visibility 0s linear 0.7s;
+  }
+  .mobile-menu[data-open='true'] {
+    visibility: visible;
+    opacity: 1;
+    clip-path: inset(0 0 0 0 round 0);
+    transition:
+      clip-path 0.7s var(--ease-apple),
+      opacity 0.3s var(--ease-apple),
+      visibility 0s;
+  }
+  .menu-item {
+    opacity: 0;
+    transform: translate3d(0, 24px, 0);
+    transition:
+      opacity 0.5s var(--ease-apple),
+      transform 0.7s var(--ease-apple);
+  }
+  .mobile-menu[data-open='true'] .menu-item {
+    opacity: 1;
+    transform: none;
+    transition-delay: calc(var(--i) * 45ms + 120ms);
+  }
+</style>

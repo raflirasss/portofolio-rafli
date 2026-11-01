@@ -1,0 +1,109 @@
+---
+import { Download } from '@lucide/astro';
+import { portfolio } from '../../data/portfolio';
+import { cvAvailable, navItems } from '../../utils/content';
+import Logo from '../ui/Logo.astro';
+import ThemeToggle from './ThemeToggle.astro';
+import MobileMenu from './MobileMenu.astro';
+
+const { personal, cv } = portfolio;
+---
+
+<header
+  id="site-header"
+  class="pointer-events-none fixed inset-x-0 top-0 z-50 transition-transform duration-700 ease-apple data-[hidden=true]:-translate-y-[120%]"
+  transition:persist
+>
+  <div class="header-fade absolute inset-x-0 top-0 -z-10 h-28 opacity-0 transition-opacity duration-500" aria-hidden="true"></div>
+  <div class="container-page flex items-center justify-between gap-4 pt-4 md:pt-5">
+    <!-- Brand -->
+    <div class="pointer-events-auto flex items-center gap-3">
+      <Logo />
+      <span class="hidden flex-col leading-tight sm:flex xl:hidden 2xl:flex">
+        <span class="text-sm font-semibold tracking-tight">{personal.shortName}</span>
+        <span class="text-xs text-muted">{portfolio.hero.eyebrow}</span>
+      </span>
+    </div>
+
+    <!-- Desktop pill nav -->
+    <nav
+      aria-label="Primary"
+      class="nav-shell pointer-events-auto hidden rounded-full border border-line p-1 backdrop-blur-xl backdrop-saturate-150 lg:block"
+    >
+      <ul class="relative flex items-center" data-nav-list>
+        <span
+          class="nav-indicator absolute top-0 left-0 h-full rounded-full bg-ink opacity-0 transition-[translate,width,opacity] duration-500 ease-apple"
+          data-nav-indicator
+          aria-hidden="true"></span>
+        {
+          navItems.map((item) => (
+            <li class="relative">
+              <a
+                href={item.href}
+                data-nav-link={item.id}
+                class="relative z-10 block rounded-full px-3.5 py-2 text-[0.82rem] font-medium text-ink-soft transition-colors duration-300 hover:text-ink aria-[current=true]:text-bg xl:px-4"
+              >
+                {item.label}
+              </a>
+            </li>
+          ))
+        }
+      </ul>
+    </nav>
+
+    <!-- Actions -->
+    <div class="nav-shell pointer-events-auto flex items-center gap-1 rounded-full border border-line p-1 backdrop-blur-xl backdrop-saturate-150">
+      {
+        cvAvailable && (
+          <a
+            href={cv.path}
+            download={cv.downloadName}
+            class="hidden h-10 items-center gap-2 rounded-full px-4 text-[0.82rem] font-medium transition-colors duration-300 hover:bg-subtle md:inline-flex"
+          >
+            <Download size={15} stroke-width={1.75} aria-hidden="true" />
+            CV
+          </a>
+        )
+      }
+      <ThemeToggle />
+      <button
+        type="button"
+        class="relative inline-flex size-10 items-center justify-center rounded-full transition-colors hover:bg-subtle lg:hidden"
+        aria-label="Open menu"
+        aria-expanded="false"
+        aria-controls="mobile-menu"
+        data-menu-toggle
+      >
+        <span class="menu-bars relative block h-3 w-4.5" aria-hidden="true">
+          <span class="absolute top-0 left-0 h-[1.5px] w-full rounded bg-current transition-[top,rotate] duration-500 ease-apple"></span>
+          <span class="absolute bottom-0 left-0 h-[1.5px] w-full rounded bg-current transition-[bottom,rotate] duration-500 ease-apple"></span>
+        </span>
+      </button>
+    </div>
+  </div>
+
+  <MobileMenu />
+</header>
+
+<style>
+  .header-fade {
+    background: linear-gradient(to bottom, var(--bg) 15%, color-mix(in oklab, var(--bg) 70%, transparent) 55%, transparent);
+  }
+  [data-scrolled='true'] .header-fade {
+    opacity: 1;
+  }
+  .nav-shell {
+    background-color: var(--glass);
+    box-shadow:
+      0 1px 0 rgb(255 255 255 / 0.05) inset,
+      0 8px 32px -16px rgb(var(--shadow-color) / 0.3);
+  }
+  [aria-expanded='true'] .menu-bars > span:first-child {
+    top: 50%;
+    rotate: 45deg;
+  }
+  [aria-expanded='true'] .menu-bars > span:last-child {
+    bottom: calc(50% - 1.5px);
+    rotate: -45deg;
+  }
+</style>

@@ -1,0 +1,50 @@
+---
+import type { SkillCategory } from '../../types/portfolio';
+import Icon from '../ui/Icon.astro';
+
+interface Props {
+  category: SkillCategory;
+  index: number;
+  class?: string;
+}
+
+const { category, index, class: className } = Astro.props;
+---
+
+<article
+  class:list={[
+    'skill-card card-surface group relative flex flex-col overflow-hidden rounded-[1.75rem] p-6 transition-[translate,border-color,box-shadow] duration-700 ease-apple hover:-translate-y-1 hover:border-line-strong md:p-8',
+    className,
+  ]}
+  data-reveal
+  data-spotlight
+  style={`--d:${index}`}
+>
+  <div class="spotlight pointer-events-none absolute inset-0 opacity-0 transition-opacity duration-500 group-hover:opacity-100" aria-hidden="true"></div>
+
+  <div class="relative mb-10 flex items-start justify-between">
+    <span class="inline-flex size-12 items-center justify-center rounded-2xl bg-subtle text-ink transition-[rotate,background-color,color] duration-700 ease-spring group-hover:-rotate-8 group-hover:bg-accent group-hover:text-accent-ink">
+      <Icon name={category.icon} size={22} />
+    </span>
+    <span class="font-mono text-xs text-muted">{String(index + 1).padStart(2, '0')}</span>
+  </div>
+
+  <h3 class="relative text-xl font-semibold tracking-tight md:text-2xl">{category.title}</h3>
+  {category.description && <p class="relative mt-2 text-sm text-pretty text-muted">{category.description}</p>}
+
+  <ul class="relative mt-auto flex flex-wrap gap-2 pt-8" aria-label={`${category.title} skills`}>
+    {
+      category.skills.map((skill) => (
+        <li class="rounded-full border border-line-strong px-3 py-1.5 text-[0.8rem] font-medium text-ink-soft transition-[border-color,color,background-color] duration-300 hover:border-ink hover:bg-ink hover:text-bg">
+          {skill}
+        </li>
+      ))
+    }
+  </ul>
+</article>
+
+<style>
+  .spotlight {
+    background: radial-gradient(420px circle at var(--mx, 50%) var(--my, 0%), color-mix(in oklab, var(--accent) 12%, transparent), transparent 60%);
+  }
+</style>

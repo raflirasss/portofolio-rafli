@@ -1,0 +1,67 @@
+---
+import { portfolio } from '../../data/portfolio';
+import { projectCategories } from '../../utils/content';
+import ProjectCard from '../cards/ProjectCard.astro';
+import SectionHeader from '../ui/SectionHeader.astro';
+
+const { projects } = portfolio;
+
+// Featured projects take a full row; the rest sit two per row. A card that would
+// end up alone in the last row also gets the full-row layout, so no half-empty rows.
+const wideSlugs = new Set<string>();
+let openRow: string | undefined;
+for (const project of projects) {
+  if (project.featured) {
+    if (openRow) wideSlugs.add(openRow);
+    wideSlugs.add(project.slug);
+    openRow = undefined;
+  } else {
+    openRow = openRow ? undefined : project.slug;
+  }
+}
+if (openRow) wideSlugs.add(openRow);
+const filters = [{ value: 'all', label: 'All work', count: projects.length }].concat(
+  projectCategories.map((category) => ({
+    value: category,
+    label: category,
+    count: projects.filter((project) => project.category === category).length,
+  })),
+);
+---
+
+<section id="projects" aria-labelledby="projects-title" class="relative py-24 md:py-36">
+  <div class="container-page">
+    <SectionHeader id="projects" />
+
+    {
+      projectCategories.length > 1 && (
+        <div
+          class="-mx-5 mb-10 flex gap-2 overflow-x-auto px-5 pb-2 [scrollbar-width:none] md:mx-0 md:flex-wrap md:px-0"
+          role="toolbar"
+          aria-label="Filter projects by category"
+          data-project-filter
+          data-reveal
+        >
+          {filters.map((filter, index) => (
+            <button
+              type="button"
+              data-filter={filter.value}
+              aria-pressed={index === 0 ? 'true' : 'false'}
+              class="inline-flex h-10 shrink-0 items-center gap-2 rounded-full border border-line-strong px-4 text-sm font-medium text-ink-soft transition-[background-color,color,border-color,scale] duration-300 ease-apple hover:border-ink hover:text-ink active:scale-95 aria-pressed:border-ink aria-pressed:bg-ink aria-pressed:text-bg"
+            >
+              {filter.label}
+              <span class="font-mono text-[0.68rem] opacity-60">{filter.count}</span>
+            </button>
+          ))}
+        </div>
+      )
+    }
+
+    <div class="grid gap-5 md:grid-cols-2 md:gap-6">
+      {projects.map((project, index) => (
+        <ProjectCard project={project} index={index} wide={wideSlugs.has(project.slug)} />
+      ))}
+    </div>
+    <p class="py-16 text-center text-muted" data-project-empty hidden>No projects in this category yet.</p>
+  </div>
+</section>

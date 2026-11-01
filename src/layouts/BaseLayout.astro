@@ -1,0 +1,44 @@
+---
+import '@fontsource-variable/inter-tight';
+import '@fontsource/instrument-serif/400.css';
+import '@fontsource/instrument-serif/400-italic.css';
+import '@fontsource-variable/jetbrains-mono';
+import '../styles/global.css';
+
+import { portfolio } from '../data/portfolio';
+import BaseHead from '../components/layout/BaseHead.astro';
+import Footer from '../components/layout/Footer.astro';
+import Navbar from '../components/navigation/Navbar.astro';
+
+interface Props {
+  title?: string;
+  description?: string;
+  image?: string;
+  type?: 'website' | 'article';
+}
+---
+
+<!doctype html>
+<html lang={portfolio.seo.lang}>
+  <head>
+    <BaseHead {...Astro.props} />
+  </head>
+  <body class="bg-bg text-ink">
+    <a
+      href="#main"
+      class="fixed top-3 left-3 z-[100] -translate-y-20 rounded-full bg-ink px-4 py-2 text-sm text-bg transition-transform focus:translate-y-0"
+    >
+      Skip to content
+    </a>
+    <Navbar />
+    <main id="main">
+      <slot />
+    </main>
+    <Footer />
+    <div class="sr-only" aria-live="polite" data-announcer></div>
+
+    <script>
+      import '../scripts/main';
+    </script>
+  </body>
+</html>
