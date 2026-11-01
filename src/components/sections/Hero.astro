@@ -3,7 +3,6 @@ import { ArrowDown, ArrowRight, Download } from '@lucide/astro';
 import { portfolio } from '../../data/portfolio';
 import { accent, cvAvailable } from '../../utils/content';
 import Button from '../ui/Button.astro';
-import OrbitVisual from '../ui/OrbitVisual.astro';
 
 const { personal, hero, cv } = portfolio;
 
@@ -20,7 +19,6 @@ const secondLine = secondWords.join(' ');
   id="top"
   aria-label="Introduction"
   class="relative isolate flex min-h-svh flex-col overflow-hidden pt-28 pb-10 md:pt-32"
-  data-parallax
 >
   <!-- Backdrop -->
   <div class="hero-backdrop grain pointer-events-none absolute inset-0 -z-10" aria-hidden="true"></div>
@@ -43,22 +41,15 @@ const secondLine = secondWords.join(' ');
       }
     </div>
 
-    <div class="relative grid flex-1 items-center gap-10 py-10 lg:grid-cols-12 lg:gap-0 lg:py-8">
-      <!-- Orbit: own column on large screens; its rings may pass behind the name, the core never does -->
-      <div class="pointer-events-none order-2 mx-auto w-full max-w-[14.5rem] sm:max-w-sm lg:pointer-events-auto lg:order-none lg:col-span-5 lg:col-start-8 lg:row-start-1 lg:max-w-none lg:translate-x-[8%]">
-        <div class="fade-up" style="--d:6">
-          <OrbitVisual />
-        </div>
-      </div>
-
-      <div class="relative order-1 lg:col-span-9 lg:col-start-1 lg:row-start-1">
+    <div class="relative flex flex-1 items-center py-14 lg:py-10">
+      <div class="relative w-full">
         <p
           class="fade-up mb-6 max-w-xl text-[clamp(1.15rem,2.2vw,1.6rem)] leading-snug tracking-tight text-pretty text-ink-soft md:mb-8"
           style="--d:1"
           set:html={accent(hero.headline)}
         />
 
-        <h1 class="display text-[clamp(2.9rem,11.5vw,5.5rem)] lg:text-[clamp(5.25rem,8vw,7.1rem)]">
+        <h1 class="display text-[clamp(2.9rem,11.5vw,5.5rem)] lg:text-[clamp(5.5rem,9.6vw,9.6rem)]">
           <span class="sr-only">{personal.fullName}</span>
           <span aria-hidden="true">
             <span class="line-mask"><span style="--d:2">{firstLine}</span></span>

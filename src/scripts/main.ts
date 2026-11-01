@@ -219,7 +219,7 @@ function initReveal(signal: AbortSignal) {
   signal.addEventListener('abort', () => observer.disconnect());
 }
 
-/* ── Pointer effects: card spotlight + hero parallax ───────────────────── */
+/* ── Pointer effects: card spotlight ───────────────────────────────────── */
 function initPointerEffects(signal: AbortSignal) {
   if (!matchMedia('(hover: hover) and (pointer: fine)').matches || reducedMotion()) return;
 
@@ -235,22 +235,6 @@ function initPointerEffects(signal: AbortSignal) {
     );
   }
 
-  const hero = $('[data-parallax]');
-  if (hero) {
-    let frame = 0;
-    hero.addEventListener(
-      'pointermove',
-      (event) => {
-        cancelAnimationFrame(frame);
-        frame = requestAnimationFrame(() => {
-          const rect = hero.getBoundingClientRect();
-          hero.style.setProperty('--px', ((event.clientX - rect.left) / rect.width - 0.5).toFixed(3));
-          hero.style.setProperty('--py', ((event.clientY - rect.top) / rect.height - 0.5).toFixed(3));
-        });
-      },
-      { signal, passive: true },
-    );
-  }
 }
 
 /* ── Project filter ────────────────────────────────────────────────────── */

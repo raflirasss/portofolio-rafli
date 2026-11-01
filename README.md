@@ -86,7 +86,7 @@ place. What's left is marked `TODO` in `src/data/portfolio.ts`:
 │   │   ├── layout/               ← BaseHead (SEO + theme script), Footer
 │   │   ├── navigation/           ← Navbar, MobileMenu, ThemeToggle
 │   │   ├── sections/             ← Hero, About, Skills, Projects, Experience, Education, Milestones, Certificates, Contact
-│   │   └── ui/                   ← Button, Tag, Icon, BrandIcon, Logo, OrbitVisual, ProjectCover, SmartImage…
+│   │   └── ui/                   ← Button, Tag, Icon, BrandIcon, Logo, ProjectCover, SmartImage…
 │   ├── data/portfolio.ts         ← ★ ALL CONTENT ★
 │   ├── layouts/BaseLayout.astro  ← fonts, global CSS, nav, footer
 │   ├── pages/
@@ -397,8 +397,7 @@ You can also deploy from the CLI: `npm i -g vercel`, then run `vercel` (preview)
 
 - **Concept: "Editorial meets interface."** Oversized tight display type, italic serif
   accents, mono labels, generous whitespace and a single signature accent color
-- **Hero:** your monogram at the center with your five disciplines orbiting it (pure CSS),
-  subtle pointer parallax, line-by-line name reveal, and a marquee of disciplines
+- **Hero:** an oversized name with a line-by-line reveal, followed by a marquee of disciplines
 - **Navigation:** a floating glass pill with a sliding active indicator (scrollspy). It hides
   on scroll down and returns on scroll up. On mobile it becomes a full-screen menu with
   staggered links

@@ -87,7 +87,7 @@ export interface HeroContent {
   intro: string;
   primaryCta: { label: string; href: string };
   secondaryCta: { label: string };
-  /** Words orbiting the monogram and scrolling in the marquee. */
+  /** Words scrolling in the marquee under the hero. */
   disciplines: string[];
 }
 
