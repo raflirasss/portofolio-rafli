@@ -7,7 +7,8 @@ import { portfolio } from './src/data/portfolio';
 export default defineConfig({
   site: portfolio.seo.siteUrl,
   trailingSlash: 'ignore',
-  integrations: [sitemap()],
+  // /print/ is the PDF version of the site — keep it out of the sitemap.
+  integrations: [sitemap({ filter: (page) => !page.includes('/print') })],
   prefetch: {
     prefetchAll: false,
     defaultStrategy: 'hover',

@@ -47,6 +47,7 @@ Open http://localhost:4321.
 | `npm run build`   | Type-check (`astro check`) and build to `dist/`           |
 | `npm run preview` | Serve the production build locally                        |
 | `npm run assets`  | Regenerate favicon PNGs and the Open Graph image          |
+| `npm run pdf`     | Export the whole portfolio as one A4 PDF (see below)      |
 
 ---
 
@@ -349,6 +350,26 @@ generated gradient cover) instead of a stock image.
 
 (A plain string path to a file in `public/` also works, e.g. `src: '/my-image.jpg'`, but it
 skips optimization.)
+
+---
+
+## PDF version
+
+For recruiters who ask for a PDF:
+
+```bash
+npm run pdf
+```
+
+This builds the site, opens the print page (`/print/`) in your installed Chrome or Edge,
+and saves `export/Portfolio-Teuku-Muhammad-Rafli-Rashadifa.pdf`. The PDF uses the same
+content file as the website, so after you edit `src/data/portfolio.ts`, run the command
+again to get an up-to-date PDF. Links in the PDF (email, WhatsApp, live sites,
+certificate verification) are clickable.
+
+You can also open `/print/` in a browser and use **Print → Save as PDF** (A4, margins
+"Default", "Background graphics" on). If Chrome/Edge is installed somewhere unusual, set
+`PDF_BROWSER` to its path. The `export/` folder is git-ignored.
 
 ---
 
