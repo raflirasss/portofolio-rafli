@@ -207,6 +207,14 @@ export const portfolio: Portfolio = {
         position: '50% 0%',
       },
       palette: ['#f59e0b', '#7c2d12'],
+      links: {
+        more: [
+          { label: 'Instagram', url: 'https://www.instagram.com/bkfcafesupplies/', platform: 'instagram' },
+          { label: 'Shopee', url: 'https://shopee.co.id/brokofie', platform: 'shop' },
+          { label: 'Tokopedia', url: 'https://www.tokopedia.com/brokofie', platform: 'shop' },
+          { label: 'Facebook', url: 'https://www.facebook.com/profile.php?id=61556571846447', platform: 'facebook' },
+        ],
+      },
       details: [
         {
           heading: 'Goal',
